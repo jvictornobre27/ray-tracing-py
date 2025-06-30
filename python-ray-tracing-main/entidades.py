@@ -1,3 +1,5 @@
+from vectors import Ponto #OK
+
 class Esfera: #Representa uma esfera 3D
 
     def __init__(self, center, radius, color): #definição da esfera e seus parametros
@@ -22,7 +24,7 @@ class Esfera: #Representa uma esfera 3D
 
         discriminant = b**2 - 4 * a * c #delta que indica se a eq quadrática tem solução real, ou seja se o raio intersecta a esfera.
 
-        if discriminant < 0: #se delta = 0 não há interseção
+        if discriminant <= 0: #se delta = 0 não há interseção
             return None
         
         #se delta > 0 ent calculamos as possiveis soluções
@@ -52,7 +54,8 @@ class Plane: #representa um plano 3D
         denominator = sum(n * lv for n, lv in zip(self.normal, line_vector)) #prod escalar entre o vetor normal do plano e o vetor direção da linha 
 
         if denominator == 0: #produto escalar zero a linha é paralela ao plano e não há interseção
-            return (False, None)
+            return None
+            #return (False, None)
         
         t = sum(n * dp for n, dp in zip(self.normal, d)) / denominator #calcula o "quanto andar" (parâmetro t) para alcançar o plano ao longo do vetor da linha
 

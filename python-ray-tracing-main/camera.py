@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-from vectors import Ponto, Vetor
+from vectors import Ponto, Vetor #OK
 
 
 def scale_rgb(color: tuple) -> tuple:
@@ -69,10 +69,11 @@ class Camera:
         self.w = self.w.__normalize__()
         self.v = self.v.__normalize__()
 
-        self.u: "Vetor" = self.w.__cross__(self.v)
+        #self.u: "Vetor" = self.w.__cross__(self.v)
+        self.u: "Vetor" = self.w.__cross__(self.v).__mul_escalar__(-1) #corrigir camera para parecer com orientação do geogebra
         self.u = self.u.__normalize__()
 
-        self.targer_distance = self.position.__distance__(self.target)
+        self.target_distance = self.position.__distance__(self.target)
 
         self.vres = vres
         self.hres = hres
@@ -99,24 +100,3 @@ class Camera:
 
         return color
 
-    def __ray_casting__(self, targets: list, distancia):
-        
-        image = np.zeros((self.vres, self.hres, 3), dtype=np.uint8) #imagem com resolução vres x hres (300)
-
-        for i in range(self.vres): #p/ cada pixel da tela (i, j), gera um raio partindo da câmera 
-            for j in range(self.hres):
-                ray = Ray( 
-                    origin=self.position, #origem é sempre a pos da cam
-                    direction=(
-                        self.w.__mul_escalar__(distancia) # aponta da câmera para o target
-                        + self.v.__mul_escalar__(2 * 0.5 * (j / self.hres - 0.5)) #vetor horizontal da câmera
-                        + self.u.__mul_escalar__(2 * 0.5 * (i / self.vres - 0.5)) #vetor vertical da câmera
-                    ),
-
-                )
-                color = self.__intersect__(ray, targets) #pega a cor de um objeto que o raio colidir
-                image[i, j] = color #pinta o pixel i,j dessa cor
-
-        cv.imshow("image", image)
-        cv.waitKey(0)
-        cv.destroyAllWindows("i")
