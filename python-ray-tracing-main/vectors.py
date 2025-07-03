@@ -1,4 +1,4 @@
-import math
+import math #OK
 
 class Ponto:
     """Representa um ponto 3D"""
@@ -47,6 +47,10 @@ class Vetor(Ponto):
         return (self.x**2 + self.y**2 + self.z**2) ** 0.5
 
     def __normalize__(self): #divide seu modulo por ele mesmo para normalizar (tornar tam 1 mantendo todo o resto)
+
+        if self.__magnitude__() == 0: #proteção da div/0 com vetor nulo
+            return Vetor(0, 0, 0)
+        
         return Vetor(
             self.x / self.__magnitude__(),
             self.y / self.__magnitude__(),
