@@ -103,23 +103,31 @@ class Transformacao:
 
     @staticmethod
     def aplicar_transformacao_ponto(ponto: Ponto, matriz):
+        # Converte o ponto para coordenadas homogêneas (adiciona o 1 no final)
         ponto_homogeneo = np.array([ponto.x, ponto.y, ponto.z, 1], dtype=float)
+        # Multiplica a matriz de transformação pelo vetor homogêneo do ponto
         resultado = matriz @ ponto_homogeneo
-        # print('aaa',ponto)
+        # Cria e retorna um novo Ponto com as coordenadas transformadas
         return Ponto(resultado[0], resultado[1], resultado[2])
 
     @staticmethod
     def aplicar_transformacao_vetor(vetor: Vetor, matriz):
+        # Converte o vetor para coordenadas homogêneas (adiciona o 0 no final, pois vetores não sofrem translação)
         vetor_homogeneo = np.array([vetor.x, vetor.y, vetor.z, 0], dtype=float)
+        # Multiplica a matriz de transformação pelo vetor homogêneo do vetor
         resultado = matriz @ vetor_homogeneo
+        # Cria e retorna um novo Vetor com as coordenadas transformadas
         return Vetor(resultado[0], resultado[1], resultado[2])
 
     @staticmethod
     def translate_sphere(esfera, dx, dy, dz):
+        # Cria a matriz de translação com os deslocamentos dx, dy, dz
         matriz_translacao = Transformacao.criar_matriz_translacao(dx, dy, dz)
+        # Aplica a translação ao centro da esfera usando a matriz de translação
         esfera.center = Transformacao.aplicar_transformacao_ponto(
             esfera.center, matriz_translacao
         )
+        # Retorna a esfera com o novo centro transladado
         return esfera
     
 #------------------------------------------------------------------------ JOÃO

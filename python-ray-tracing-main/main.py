@@ -2,6 +2,7 @@ from vectors import Ponto, Vetor
 from entidades import Esfera, Mesh, Plane
 from camera import Camera
 from ray_casting import RayCasting
+from transformation import Transformacao
 
 
 def main():
@@ -42,11 +43,11 @@ def main():
          color=(255, 0, 0),
      )
 
-    # esfera = Esfera(
-    #     center=Ponto(2, 0, 0),
-    #     radius=0.25,
-    #     color=(0, 128, 0),
-    # )
+    esfera = Esfera(
+        center=Ponto(2, 0, 0),
+        radius=4,
+        color=(0, 128, 0),
+    )
 
     # esfera2 = Esfera(
     #     center=Ponto(4, 0, 0),
@@ -63,8 +64,9 @@ def main():
         triangle_tuple_vertices=[(0, 1, 4), (1, 2, 4), (2, 3, 4), (0, 3, 4)], #Basicamente (A,B,E) (B,C,E) (C,D,E) (A,D,E)
         vertex_normals=[],
     )
+    esfera = Transformacao.translate_sphere(esfera, 10, 0, 0)
 
-    entidades = [mesh]
+    entidades = [mesh, esfera]
 
     ray_casting.__generate_image__(entidades, 1, camera)
 
