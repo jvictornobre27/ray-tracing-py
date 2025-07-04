@@ -83,6 +83,15 @@ class Transformacao:
 
     @staticmethod
     def criar_matriz_rotacao_y(angulo):
+         """
+        Cria uma matriz de rotação para girar pontos em torno do eixo y.
+
+        Args:
+            angulo (float): O ângulo de rotação em radianos.
+
+        Returns:
+            numpy.ndarray: Uma matriz NumPy 4x4 que representa a matriz de rotação.
+        """
         cos_a = math.cos(angulo)
         sin_a = math.sin(angulo)
         return np.array(
