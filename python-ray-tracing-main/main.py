@@ -7,6 +7,21 @@ from transformation import Transformacao
 
 def main():
 
+    ray_casting = RayCasting(hres=500, vres=500)
+    
+    plano = Plane(
+         point=Ponto(0, 3, 0),
+         normal=Vetor(0, 1, 0),
+         color=(255, 0, 0),
+     )
+
+    esfera = Esfera(
+        center=Ponto(2, 0, 0),
+        radius=4,
+        color=(0, 128, 0),
+    )
+
+    """
     p0 = Ponto(5, 0, 0) #A
     p1 = Ponto(0, 5, 0) #B
     p2 = Ponto(-5, 0, 0) #C
@@ -29,32 +44,6 @@ def main():
     v8 = p4.__sub__(p3) #E-D
     normal4 = v7.__cross__(v8).__normalize__()
 
-    camera = Camera(
-        target=Ponto(0, 0, 0),
-        position=Ponto(0, 0, 25),
-        up=Vetor(0, -1, 0)
-    )
-
-    ray_casting = RayCasting(hres=300, vres=300)
-    
-    plano = Plane(
-         point=Ponto(0, 3, 0),
-         normal=Vetor(0, 1, 0),
-         color=(255, 0, 0),
-     )
-
-    esfera = Esfera(
-        center=Ponto(2, 0, 0),
-        radius=4,
-        color=(0, 128, 0),
-    )
-
-    # esfera2 = Esfera(
-    #     center=Ponto(4, 0, 0),
-    #     radius=1,
-    #     color=(128, 128, 0),
-    # )
-
     mesh = Mesh(
         triangle_quantity=4,
         vertices_quantity=5,
@@ -64,9 +53,37 @@ def main():
         triangle_tuple_vertices=[(0, 1, 4), (1, 2, 4), (2, 3, 4), (0, 3, 4)], #Basicamente (A,B,E) (B,C,E) (C,D,E) (A,D,E)
         vertex_normals=[],
     )
-    esfera = Transformacao.translate_sphere(esfera, 10, 0, 0)
+    """
+    #"""
+    p0a = Ponto(2, 0, 0)
+    p1a = Ponto(-2, 2, 0)
+    p2a = Ponto(-2, -2, 0)
 
-    entidades = [mesh, esfera]
+
+    v1a = p1a.__sub__(p0a)
+    v2a = p2a.__sub__(p0a)
+    normala = v1a.__cross__(v2a).__normalize__()
+
+    mesh = Mesh(
+        triangle_quantity=1,
+        vertices_quantity=3,
+        vertices=[p0a, p1a, p2a],
+        triangle_normals=[normala],
+        color=(0, 255, 255),
+        triangle_tuple_vertices=[(0, 1, 2)],
+        vertex_normals=[],
+    )
+    #"""
+    #esfera = Transformacao.translate_sphere(esfera, 10, 0, 0)
+
+    camera = Camera(
+        target=Ponto(0, 0, 0),
+        #position=Ponto(0, 0, 10), #Camera 1
+        position=Ponto(0, 10, 2), #Camera 3
+        up=Vetor(0, -1, 0)
+    )
+
+    entidades = [mesh]
 
     ray_casting.__generate_image__(entidades, 1, camera)
 

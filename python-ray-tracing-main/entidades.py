@@ -61,7 +61,7 @@ class Plane: #representa um plano 3D
 
         return tuple(lp + t * lv for lp, lv in zip(line_point, line_vector)) #achar as coordenadas exatas do ponto de interseção
 
-#--------------------------------SEGUNDA ENTREGA ADICIONAIS--------------------------------------------------------------------------
+#----------------------------SEGUNDA ENTREGA ADICIONAIS--------------------------------------------------------------------------
 
 class Mesh: #representa uma malha
 
@@ -86,35 +86,44 @@ class Mesh: #representa uma malha
 
     def __point_in_triangle__(self, point, triangle_vertices): #Verifica se um ponto esta dentro de um triangulo usando coord baricentrica
 
-        #Cria vetores entre os vértices do triângulo.
-        v0 = triangle_vertices[2].__sub__(triangle_vertices[0]) 
-        v1 = triangle_vertices[1].__sub__(triangle_vertices[0])
-        v2 = point.__sub__(triangle_vertices[0])
+        #Cria vetores entre os vértices do triângulo
+        v0 = triangle_vertices[2].__sub__(triangle_vertices[0])  # C - A
+        v1 = triangle_vertices[1].__sub__(triangle_vertices[0])  # B - A
+        v2 = point.__sub__(triangle_vertices[0])                 # P - A sendo P o ponto que quero testar
 
-        d00 = v0.__mul__(v0)
-        d01 = v0.__mul__(v1)
-        d11 = v1.__mul__(v1)
-        d20 = v2.__mul__(v0)
-        d21 = v2.__mul__(v1)
 
+        #produtos escalares p/ sistema linear dizer quanto o vetor do ponto "aponta" na direção de cada lado
+        d00 = v0.__mul__(v0)      #AC ⋅ AC
+        d01 = v0.__mul__(v1)      #AC ⋅ AB
+        d11 = v1.__mul__(v1)      #AB ⋅ AB
+        d20 = v2.__mul__(v0)      #AP ⋅ AC
+        d21 = v2.__mul__(v1)      #AP ⋅ AB
+
+        #denominador da equação baricêntrica
         denom = d00 * d11 - d01 * d01
 
+        #resolve para as coordenadas baricêntricas v e w
         v = (d11 * d20 - d01 * d21) / denom
         w = (d00 * d21 - d01 * d20) / denom
         u = 1.0 - v - w
 
-        return (v >= 0) and (w >= 0) and (u >= 0)
+        return (v >= 0) and (w >= 0) and (u >= 0) #Se são n-negativos ent assumimos q o ponto está dentro/borda do triângulo
 
-    def __intersect_line__(self, line_point, line_vector): #Calcula a interseção de o ponto de interseção entre a malha e uma linha
+    def __intersect_line__(self, line_point, line_vector): #Calcula a interseção de o ponto de interseção entre a malha e uma linha (para pintar o pixel)
         for index, triangle in enumerate(self.triangle_tuple_vertices):
-            triangle_vertices = [self.vertices[i] for i in triangle]
+
+            triangle_vertices = [self.vertices[i] for i in triangle] #pego os vertices de cada tringulo da malha
             triangle_normal = self.triangle_normals[index]
-            plane = Plane(triangle_vertices[0], triangle_normal, self.color)
-            intersection_point = plane.__intersect_line__(line_point, line_vector)
+
+            plane = Plane(triangle_vertices[0], triangle_normal, self.color) #defino um plano no triângulo (dentro dele)
+
+            intersection_point = plane.__intersect_line__(line_point, line_vector) #vejo se tem interseção do raio com o plano
+
             if intersection_point is not None:
-                intersection_point = Ponto(
+                intersection_point = Ponto(  #se tiver converto p ponto
                     intersection_point[0], intersection_point[1], intersection_point[2]
                 )
+                #vê se o ponto está dentro do triângulo e o devolve caso sim
                 if self.__point_in_triangle__(intersection_point, triangle_vertices):
                     return (
                         intersection_point.x,

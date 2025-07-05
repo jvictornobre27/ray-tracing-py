@@ -70,7 +70,14 @@ class ObjReader:
                 elif line.startswith('f '):
                     face = Face()
                     face.vertice_indices = list(map(lambda x: int(x.split('/')[0]) - 1, line[2:].split()))
-                    face.normal_indices = list(map(lambda x: int(x.split('/')[2]) - 1, line[2:].split()))
+                    face.normal_indices = []
+                    for item in line[2:].split():
+                        parts = item.split('/')
+                        if len(parts) >= 3 and parts[2]:
+                            face.normal_indices.append(int(parts[2]) - 1)
+                        else:
+                            face.normal_indices.append(-1)  # ou None, ou apenas ignore
+
                     face.ka = self.cur_material.ka
                     face.kd = self.cur_material.kd
                     face.ks = self.cur_material.ks
