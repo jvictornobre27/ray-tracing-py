@@ -1,3 +1,4 @@
+
 from vectors import Ponto #OK
 
 class Esfera: #Representa uma esfera 3D
@@ -127,6 +128,7 @@ class Mesh: #representa uma malha
         k_reflexao=0.0,  # Coeficiente de reflexão (>= 0 e <= 1)
         k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
         n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
+        normal_to_intersection_point=None,  # Vetor normal no ponto de interseção
     ):
         self.triangle_quantity = triangle_quantity
         self.vertices_quantity = vertices_quantity
@@ -142,6 +144,11 @@ class Mesh: #representa uma malha
         self.n_rugosidade = n_rugosidade
 
         self.color = color
+        self.k_difuso = k_difuso
+        self.k_especular = k_especular
+        self.n_rugosidade = n_rugosidade
+        self.k_ambiental = k_ambiental
+        self.normal_to_intersection_point = normal_to_intersection_point
 
     def __point_in_triangle__(self, point, triangle_vertices): #Verifica se um ponto esta dentro de um triangulo usando coord baricentrica
 

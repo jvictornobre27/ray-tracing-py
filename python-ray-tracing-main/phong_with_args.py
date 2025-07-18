@@ -40,16 +40,22 @@ def phong(entidade, luzes, ponto_intersec, camera_position):
         ])
 
     elif isinstance(entidade, Mesh):
-        #P/ uma malaha, pode ter uma normal calculada no ponto
-        N = np.array([
-            entidade.normal_to_intersection_point.x,
-            entidade.normal_to_intersection_point.y,
-            entidade.normal_to_intersection_point.z,
-        ])
+        #P/ uma malha, pode ter uma normal calculada no ponto
+        if entidade.normal_to_intersection_point is not None:
+            N = np.array([
+                entidade.normal_to_intersection_point.x,
+                entidade.normal_to_intersection_point.y,
+                entidade.normal_to_intersection_point.z,
+            ])
+        else:
+            N = None
 
     #vemos se tem normal e normalizamos (sempre queremos vetores unitários)
-    if N is not None or np.linalg.norm(N) != 0:
+    if N is not None and np.linalg.norm(N) != 0:
         N = N / np.linalg.norm(N)
+    else:
+        # Se não tem normal válida, retorna cor preta
+        return [0, 0, 0]
 
     #iluminação começa zerada (isso será o somatório la que chamamos de sum_lights)
     i_sum = np.array([0.0, 0.0, 0.0])
