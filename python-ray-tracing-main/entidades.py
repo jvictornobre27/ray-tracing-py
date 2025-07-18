@@ -136,6 +136,7 @@ class Mesh: #representa uma malha
         self.triangle_tuple_vertices = triangle_tuple_vertices #lista de tuplas com índices de vértices que formam os triângulos
         self.triangle_normals = triangle_normals #uma normal (vetor perpendicular) para cada triângulo
         self.vertex_normals = vertex_normals
+        self.normal_to_intersection_point = None
         self.k_difuso = k_difuso
         self.k_especular = k_especular
         self.k_ambiental = k_ambiental
@@ -191,6 +192,7 @@ class Mesh: #representa uma malha
                 )
                 #vê se o ponto está dentro do triângulo e o devolve caso sim
                 if self.__point_in_triangle__(intersection_point, triangle_vertices):
+                    self.normal_to_intersection_point = triangle_normal # normal do triângulo que foi atingido
                     return (
                         intersection_point.x,
                         intersection_point.y,
