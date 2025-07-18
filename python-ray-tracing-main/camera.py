@@ -99,4 +99,3 @@ class Camera:
                     color = target.color
 
         return color
-
