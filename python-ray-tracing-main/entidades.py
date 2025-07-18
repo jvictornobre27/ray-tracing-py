@@ -1,11 +1,16 @@
+
 from vectors import Ponto #OK
 
 class Esfera: #Representa uma esfera 3D
 
-    def __init__(self, center, radius, color): #definição da esfera e seus parametros
+    def __init__(self, center, radius, color, k_difuso=1.0, k_especular=1.0, n_rugosidade=10, k_ambiental=0.1): #definição da esfera e seus parametros
         self.center = center 
         self.radius = radius 
         self.color = color 
+        self.k_difuso = k_difuso
+        self.k_especular = k_especular
+        self.n_rugosidade = n_rugosidade
+        self.k_ambiental = k_ambiental
 
                     #centro da esf, origem, direção
     def __intersect_line__(self, line_point, line_vector): #determina se um raio interceptou a esfera, e retorna o ponto de interseção mais próximo da câmera ou seja resolve a equação do 2º grau: a·t² + b·t + c = 0
@@ -42,10 +47,14 @@ class Esfera: #Representa uma esfera 3D
 
 class Plane: #representa um plano 3D
 
-    def __init__(self, point, normal, color): #um ponto qualquer pertencente ao plano | vetor perpendicular ao plano | cor do plano 
+    def __init__(self, point, normal, color, k_difuso=1.0, k_especular=1.0, n_rugosidade=10, k_ambiental=0.1): #um ponto qualquer pertencente ao plano | vetor perpendicular ao plano | cor do plano 
         self.point = point
         self.normal = normal
         self.color = color
+        self.k_difuso = k_difuso
+        self.k_especular = k_especular
+        self.n_rugosidade = n_rugosidade
+        self.k_ambiental = k_ambiental
 
     def __intersect_line__(self, line_point, line_vector): #calcula o ponto de interseção entre uma linha (definida por um ponto e um vetor direção) e o plano
 
@@ -74,6 +83,10 @@ class Mesh: #representa uma malha
         triangle_normals: list,
         vertex_normals: list,
         color,
+        k_difuso=1.0,
+        k_especular=1.0,
+        n_rugosidade=10,
+        k_ambiental=0.1,
     ):
         self.triangle_quantity = triangle_quantity
         self.vertices_quantity = vertices_quantity
@@ -83,6 +96,10 @@ class Mesh: #representa uma malha
         self.vertex_normals = vertex_normals
 
         self.color = color
+        self.k_difuso = k_difuso
+        self.k_especular = k_especular
+        self.n_rugosidade = n_rugosidade
+        self.k_ambiental = k_ambiental
 
     def __point_in_triangle__(self, point, triangle_vertices): #Verifica se um ponto esta dentro de um triangulo usando coord baricentrica
 
