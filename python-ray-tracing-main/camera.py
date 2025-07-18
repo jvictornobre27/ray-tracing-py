@@ -1,7 +1,8 @@
 import cv2 as cv
 import numpy as np
 from vectors import Ponto, Vetor #OK
-
+from phong_with_args import phong
+from fonte_de_luz import Luz 
 
 def scale_rgb(color: tuple) -> tuple:
     return tuple(rgb / 255 for rgb in color)
@@ -96,6 +97,16 @@ class Camera:
                 distance = ray.origin.__distance__(distance_vetor) #se for a menor distancia atualiza a cor
                 if distance < smallest_distance:
                     smallest_distance = distance
-                    color = target.color
+                    # Cor computada pelo modelo de phong
+                    color = phong(
+                        target, # Entidade que foi atingida
+                        # Lista de luzes
+                        [
+                            Luz(2, 1, 0, [153, 153, 153]),
+                            Luz(-2, 1, 0, [153, 153, 153]),
+                        ],
+                        Ponto(intersection[0], intersection[1], intersection[2]),
+                        self.position,
+                    )
 
         return color
