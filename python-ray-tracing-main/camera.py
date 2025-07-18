@@ -84,7 +84,7 @@ class Camera:
     ) -> list[bool, list[int, int, int]]:
 
         smallest_distance = float("inf")
-        color = [100, 100, 100] #tudo começa cinza
+        color = [0, 0, 0] # tudo começa preto
 
         for target in targets: #itera sobre tudo que tem na tela
             intersection = target.__intersect_line__(ray.origin, ray.direction) #usa o método de interseção do objeto dos planos passando o raio. Se houver interseção, será retornado um ponto 
