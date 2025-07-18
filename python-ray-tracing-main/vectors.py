@@ -1,4 +1,4 @@
-import math #OK
+import math 
 
 class Ponto:
     """Representa um ponto 3D"""

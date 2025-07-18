@@ -131,4 +131,3 @@ class Mesh: #representa uma malha
                         intersection_point.z,
                     )
         return None
-
