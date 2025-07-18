@@ -24,7 +24,18 @@ class Esfera: #Representa uma esfera 3D
         self.k_ambiental = k_ambiental  
         self.k_reflexao = k_reflexao  
         self.k_transmissao = k_transmissao  
-        self.n_rugosidade = n_rugosidade  
+        self.n_rugosidade = n_rugosidade
+
+    def __get_normal_vector_to_intersection_point__(self, intersection_point):
+        """
+        Calcula o vetor normal à superfície da esfera no ponto de interseção fornecido, que
+        é perpendicular à superfície da esfera no ponto de interseção e aponta para fora do centro da esfera.
+        """
+        return [
+            intersection_point.x - self.center.x, # Componente x do vetor normal no ponto de interseção
+            intersection_point.y - self.center.y, # Componente y do vetor normal no ponto de interseção
+            intersection_point.z - self.center.z, # Componente z do vetor normal no ponto de interseção
+        ]
 
     def __intersect_line__(self, line_point, line_vector): #determina se um raio interceptou a esfera, e retorna o ponto de interseção mais próximo da câmera ou seja resolve a equação do 2º grau: a·t² + b·t + c = 0
 
