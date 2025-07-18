@@ -2,17 +2,42 @@
 from vectors import Ponto #OK
 
 class Esfera: #Representa uma esfera 3D
-
-    def __init__(self, center, radius, color, k_difuso=1.0, k_especular=1.0, n_rugosidade=10, k_ambiental=0.1): #definição da esfera e seus parametros
+    
+    # definição da esfera e seus parametros, adicionando os coeficientes do material para a Terceira Entrega
+    def __init__( 
+        self,
+        center, 
+        radius, 
+        color,
+        k_difuso=0.0,  # Coeficiente difuso (>= 0 e <= 1)
+        k_especular=0.0,  # Coeficiente especular (>= 0 e <= 1)
+        k_ambiental=0.0,  # Coeficiente ambiental (>= 0 e <= 1)
+        k_reflexao=0.0,  # Coeficiente de reflexão (>= 0 e <= 1)
+        k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
+        n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
+        ): 
+        # inicializando a esfera
         self.center = center 
         self.radius = radius 
-        self.color = color 
-        self.k_difuso = k_difuso
-        self.k_especular = k_especular
+        self.color = color
+        self.k_difuso = k_difuso  
+        self.k_especular = k_especular  
+        self.k_ambiental = k_ambiental  
+        self.k_reflexao = k_reflexao  
+        self.k_transmissao = k_transmissao  
         self.n_rugosidade = n_rugosidade
-        self.k_ambiental = k_ambiental
 
-                    #centro da esf, origem, direção
+    def __get_normal_vector_to_intersection_point__(self, intersection_point):
+        """
+        Calcula o vetor normal à superfície da esfera no ponto de interseção fornecido, que
+        é perpendicular à superfície da esfera no ponto de interseção e aponta para fora do centro da esfera.
+        """
+        return [
+            intersection_point.x - self.center.x, # Componente x do vetor normal no ponto de interseção
+            intersection_point.y - self.center.y, # Componente y do vetor normal no ponto de interseção
+            intersection_point.z - self.center.z, # Componente z do vetor normal no ponto de interseção
+        ]
+
     def __intersect_line__(self, line_point, line_vector): #determina se um raio interceptou a esfera, e retorna o ponto de interseção mais próximo da câmera ou seja resolve a equação do 2º grau: a·t² + b·t + c = 0
 
         a = sum(i * j for i, j in zip(line_vector, line_vector)) #produto escalar do vetor com ele mesmo: |v|² = v·v = x² + y² + z²
@@ -46,15 +71,29 @@ class Esfera: #Representa uma esfera 3D
 
 
 class Plane: #representa um plano 3D
-
-    def __init__(self, point, normal, color, k_difuso=1.0, k_especular=1.0, n_rugosidade=10, k_ambiental=0.1): #um ponto qualquer pertencente ao plano | vetor perpendicular ao plano | cor do plano 
+    # definição do plano e seus parametros, adicionando os coeficientes do material para a Terceira Entrega
+    def __init__(
+        self, 
+        point, 
+        normal, 
+        color,
+        k_difuso=0.0,  # Coeficiente difuso (>= 0 e <= 1)
+        k_especular=0.0,  # Coeficiente especular (>= 0 e <= 1)
+        k_ambiental=0.0,  # Coeficiente ambiental (>= 0 e <= 1)
+        k_reflexao=0.0,  # Coeficiente de reflexão (>= 0 e <= 1)
+        k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
+        n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
+        ): 
+        # inicializando o plano
         self.point = point
         self.normal = normal
         self.color = color
         self.k_difuso = k_difuso
         self.k_especular = k_especular
-        self.n_rugosidade = n_rugosidade
         self.k_ambiental = k_ambiental
+        self.k_reflexao = k_reflexao
+        self.k_transmissao = k_transmissao
+        self.n_rugosidade = n_rugosidade
 
     def __intersect_line__(self, line_point, line_vector): #calcula o ponto de interseção entre uma linha (definida por um ponto e um vetor direção) e o plano
 
@@ -73,7 +112,7 @@ class Plane: #representa um plano 3D
 #----------------------------SEGUNDA ENTREGA ADICIONAIS--------------------------------------------------------------------------
 
 class Mesh: #representa uma malha
-
+    # definição da malha e seus parametros, adicionando os coeficientes do material para a Terceira Entrega
     def __init__(
         self,
         triangle_quantity: int,
@@ -83,10 +122,12 @@ class Mesh: #representa uma malha
         triangle_normals: list,
         vertex_normals: list,
         color,
-        k_difuso=1.0,
-        k_especular=1.0,
-        n_rugosidade=10,
-        k_ambiental=0.1,
+        k_difuso=0.0,  # Coeficiente difuso (>= 0 e <= 1)
+        k_especular=0.0,  # Coeficiente especular (>= 0 e <= 1)
+        k_ambiental=0.0,  # Coeficiente ambiental (>= 0 e <= 1)
+        k_reflexao=0.0,  # Coeficiente de reflexão (>= 0 e <= 1)
+        k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
+        n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
     ):
         self.triangle_quantity = triangle_quantity
         self.vertices_quantity = vertices_quantity
@@ -94,6 +135,12 @@ class Mesh: #representa uma malha
         self.triangle_tuple_vertices = triangle_tuple_vertices #lista de tuplas com índices de vértices que formam os triângulos
         self.triangle_normals = triangle_normals #uma normal (vetor perpendicular) para cada triângulo
         self.vertex_normals = vertex_normals
+        self.k_difuso = k_difuso
+        self.k_especular = k_especular
+        self.k_ambiental = k_ambiental
+        self.k_reflexao = k_reflexao
+        self.k_transmissao = k_transmissao
+        self.n_rugosidade = n_rugosidade
 
         self.color = color
         self.k_difuso = k_difuso
