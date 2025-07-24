@@ -8,12 +8,16 @@ def scale_rgb(color: tuple) -> tuple:
     return tuple(rgb / 255 for rgb in color)
 
 
+from typing import Sequence
+
 class Ray:
 #representa os raios da camera tem funções para pegar pontos ao longo do raio, somar/subtrair/multiplicar/dividir raios
 
     def __init__(self, origin: "Ponto", direction: "Vetor"):
         #inicia com o ponto da origem dele e para onde ele vai
         self.origin = origin
+        if not isinstance(direction, Vetor):
+            raise TypeError("direction deve ser uma instância de Vetor")
         self.direction = direction
 
     def __str__(self):
@@ -25,7 +29,10 @@ class Ray:
 
 
     def get_point(self, t: float) -> "Ponto": #serve para pegar um ponto que está a uma distância t do ponto de origem do raio, seguindo sua direção
-        return self.origin + (self.direction.__mul_escalar__(t))
+        # Usar método __mul_escalar__ para multiplicação escalar
+        if not hasattr(self.direction, "__mul_escalar__"):
+            raise AttributeError("direction não possui método __mul_escalar__")
+        return self.origin + self.direction.__mul_escalar__(t)
 
     def __add__(self, other: "Ray") -> "Ray": #soma dois raios somando origem com origem e direção com direção
         return Ray(
@@ -38,10 +45,18 @@ class Ray:
         )
 
     def __mul__(self, other: float) -> "Ray": #mult origem e direção por um escalar (escalonar)
-        return Ray(self.origin.__mul__(other), self.direction.__mul__(other))
+        # Usar método __mul_escalar__ para multiplicação escalar
+        if not hasattr(self.origin, "__mul_escalar__") or not hasattr(self.direction, "__mul_escalar__"):
+            raise AttributeError("origin ou direction não possuem método __mul_escalar__")
+        return Ray(self.origin.__mul_escalar__(other), self.direction.__mul_escalar__(other))
 
     def __truediv__(self, other: float) -> "Ray": #divide origem e direção por um escalar other
-        return Ray(self.origin.__truediv__(other), self.direction.__truediv__(other))
+        # Usar método __truediv__ se existir, senão implementar divisão escalar
+        # Como Ponto e Vetor não possuem __truediv__, implementar divisão manualmente
+        return Ray(
+            Ponto(self.origin.x / other, self.origin.y / other, self.origin.z / other),
+            Vetor(self.direction.x / other, self.direction.y / other, self.direction.z / other),
+        )
 
 
 class Camera:
@@ -80,13 +95,15 @@ class Camera:
         self.hres = hres
 
     def __intersect__( #vai disparar um raio e ver com qual objeto ele colide primeiro (mais próximo da câmera). Ele retorna a cor do objeto atingido
-        self, ray: "Ray", targets: list
-    ) -> list[bool, list[int, int, int]]:
+        self, ray: "Ray", targets: Sequence["object"]
+    ) -> list[int]:
 
         smallest_distance = float("inf")
         color = [0, 0, 0] # tudo começa preto
 
         for target in targets: #itera sobre tudo que tem na tela
+            if not hasattr(target, "__intersect_line__"):
+                continue
             intersection = target.__intersect_line__(ray.origin, ray.direction) #usa o método de interseção do objeto dos planos passando o raio. Se houver interseção, será retornado um ponto 
 
             if intersection: #se sim cria um vetor com o ponto de interseção e pega sua distancia
@@ -102,8 +119,8 @@ class Camera:
                         target, # Entidade que foi atingida
                         # Lista de luzes
                         [
-                            Luz(2, 1, 0, [153, 153, 153]),
-                            Luz(-2, 1, 0, [153, 153, 153]),
+                            Luz(2, 1, 0, [255, 255, 255]),
+                            Luz(-2, 1, 0, [255, 255, 255]),
                         ],
                         Ponto(intersection[0], intersection[1], intersection[2]),
                         self.position,
