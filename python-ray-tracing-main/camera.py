@@ -1,25 +1,4 @@
-# python-ray-tracing-main/camera.py
-
 import cv2 as cv
-import numpy as np
-from vectors import Ponto, Vetor
-from phong_with_args import phong
-from fonte_de_luz import Luz
-from ray import Ray # Importa a classe do novo arquivo
-
-class Camera:
-    # __init__ permanece exatamente o mesmo
-    def __init__(self, target, position, up, vres=300, hres=300):
-        self.position = position; self.target = target; self.up = up
-        self.w: "Vetor" = (self.target - self.position).__normalize__()
-        self.v: "Vetor" = self.up.__cross__(self.w).__normalize__()
-        self.u: "Vetor" = self.w.__cross__(self.v).__mul_escalar__(-1)
-        self.vres = vres; self.hres = hres
-
-    # A lógica de __intersect__ é simplificada para apenas encontrar o objeto mais próximo
-    # e passar o controle para a função phong recursiva.
-    def __intersect__(self, ray: "Ray", targets: list):
-        smallest_distance = import cv2 as cv
 import numpy as np
 from vectors import Ponto, Vetor 
 from phong_with_args import phong
@@ -135,24 +114,4 @@ class Camera:
                         targets,                              #NOVO
                     )
 
-        return colorfloat('inf')
-        closest_entity_info = None
-
-        for target in targets:
-            intersection = target.__intersect_line__(ray.origin, ray.direction)
-            if intersection:
-                intersection_point = Ponto(*intersection)
-                distance = ray.origin.__distance__(intersection_point)
-                if distance < smallest_distance:
-                    smallest_distance = distance
-                    closest_entity_info = (target, intersection_point)
-        
-        if closest_entity_info:
-            target, point = closest_entity_info
-            return phong(target, 
-                         [Luz(0, 10, 10, [255, 255, 255])], # Luzes da cena
-                         point, 
-                         ray.direction, 
-                         targets) # Passa a lista completa de objetos
-        
-        return [25, 25, 25] # Cor de fundo (ambiente escuro)
+        return color
