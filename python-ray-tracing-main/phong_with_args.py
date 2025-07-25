@@ -1,13 +1,14 @@
 import numpy as np
 from entidades import Esfera, Plane, Mesh
 from vectors import Ponto, Vetor
-from fonte_de_luz import Luz                       #NOVO
-from ray import Ray                                #NOVO
+from fonte_de_luz import Luz                       
+from ray import Ray                                
 
 
 """
-Fórmula que queremos satisfazer
-I = I_a * k_a + sum_lights( I_l * [ k_d * (N · L) + k_s * (R · V)^n ] )
+Fórmula que queremos satisfazer:
+I = Iluminação_Local + k_r * I_refletida + k_t * I_refratada
+Onde Iluminação_Local = I_a * k_a + sum_lights( I_l * [ k_d * (N · L) + k_s * (R · V)^n ] )
 """
 
 #vai servir p limitar um valor entre mínimo e máximo, como garantir que a luz não passe de 255 nem seja negativa
@@ -15,56 +16,56 @@ def clamp(minimum, x, maximum):
     return max(minimum, min(x, maximum))
 
 def find_closest_intersection(
-    ray, entidades, profundidade_reflexao, profundidade_refracao   #NOVO
-):                                                                 #NOVO
-    """                                                            #NOVO
+    ray, entidades, profundidade_reflexao, profundidade_refracao   
+):                                                                 
+    """                                                            
     Encontra a entidade mais próxima e o ponto de interseção com base no raio fornecido.
-    """                                                            #NOVO
+    """                                                            
 
-    color = [0, 0, 0]                                              #NOVO
-    min_distance = float("inf")                                    #NOVO
+    color = [0, 0, 0]                                              
+    min_distance = float("inf")                                    
 
-    for entidade in entidades:                                     #NOVO
-        intersection = entidade.__intersect_line__(                #NOVO
-            (ray.origin),                                          #NOVO
-            (ray.direction),                                       #NOVO
-        )                                                          #NOVO
-        if intersection:                                           #NOVO
-            distance_vetor = Vetor(intersection[0], intersection[1], intersection[2])     #NOVO
-            distance = ray.origin.__distance__(distance_vetor)     #NOVO
-            if distance < min_distance:                            #NOVO
-                min_distance = distance                            #NOVO
-                color = phong(                                     #NOVO
-                    entidade,                                      #NOVO
-                    [Luz(0, 5, 5, [255, 255, 255])],               #NOVO
-                    Ponto(intersection[0], intersection[1], intersection[2]), #NOVO
-                    ray.origin,                                    #NOVO
-                    entidades,                                     #NOVO
-                    profundidade_reflexao,                         #NOVO
-                    profundidade_refracao,                         #NOVO
-                )                                                  #NOVO
-    return color                                                   #NOVO
+    for entidade in entidades:                                     
+        intersection = entidade.__intersect_line__(                
+            (ray.origin),                                          
+            (ray.direction),                                       
+        )                                                          
+        if intersection:                                           
+            distance_vetor = Vetor(intersection[0], intersection[1], intersection[2])     
+            distance = ray.origin.__distance__(distance_vetor)     
+            if distance < min_distance:                            
+                min_distance = distance                            
+                color = phong(                                     
+                    entidade,                                      
+                    [Luz(0, 5, 5, [255, 255, 255])],               
+                    Ponto(intersection[0], intersection[1], intersection[2]), 
+                    ray.origin,                                    
+                    entidades,                                     
+                    profundidade_reflexao,                         
+                    profundidade_refracao,                         
+                )                                                  
+    return color                                                   
 
-def refract(V, N, n_in, n_out):                    #NOVO
+def refract(V, N, n_in, n_out):                    
     """                                            
     Calcula o vetor de refração usando a Lei de Snell.
     """                                            
-    n = n_in / n_out                               #NOVO
-    cos_teta_1 = np.dot(N, -V)                     #NOVO
-    inner = 1 - n**2 * (1 - cos_teta_1**2)         #NOVO
-    if inner < 0:                                  #NOVO
-        # Reflexão total interna, não tem refração #NOVO
-        return None                                #NOVO
-    cos_teta_2 = np.sqrt(inner)                    #NOVO
-    V_refratado = n * V + (n * cos_teta_1 - cos_teta_2) * N #NOVO
-    if cos_teta_1 <= 0:                            #NOVO
-        V_refratado = n * V + (n * cos_teta_1 + cos_teta_2) * N #NOVO
-    return V_refratado                             #NOVO
+    n = n_in / n_out                               
+    cos_teta_1 = np.dot(N, -V)                     
+    inner = 1 - n**2 * (1 - cos_teta_1**2)         
+    if inner < 0:                                  
+        # Reflexão total interna, não tem refração 
+        return None                                
+    cos_teta_2 = np.sqrt(inner)                    
+    V_refratado = n * V + (n * cos_teta_1 - cos_teta_2) * N 
+    if cos_teta_1 <= 0:                            
+        V_refratado = n * V + (n * cos_teta_1 + cos_teta_2) * N 
+    return V_refratado                             
 
 
 
 #calcula a cor no ponto onde o raio bateu
-def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundidade_reflexao=0, profundidade_refracao=0,): #NOVOS PARAMETROS
+def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundidade_reflexao=0, profundidade_refracao=0):
     
     Ia = np.array([50, 50, 50])  #intensidade da luz ambiente (claridade) -> I_a na fórmula
 
@@ -100,7 +101,7 @@ def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundid
         ])
 
     #vemos se tem normal e normalizamos (sempre queremos vetores unitários)
-    if N is not None or np.linalg.norm(N) != 0:
+    if N is not None and np.linalg.norm(N) != 0:
         N = N / np.linalg.norm(N)
 
 
@@ -146,10 +147,10 @@ def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundid
     cor = (Ia * entidade.k_ambiental) + i_sum
 
 #------------------------------------------------------------------------------------------------------------------
-    if profundidade_reflexao >= 3 and profundidade_refracao >= 3:    #NOVO
-        return [51, 51, 51]                                          #NOVO
+    if profundidade_reflexao >= 3 and profundidade_refracao >= 3:    
+        return [51, 51, 51]                                          
     
-    # Adicionar reflexão recursiva                        #NOVO
+    # Adicionar reflexão recursiva                        
     if profundidade_reflexao < 3 and entidade.k_reflexao > 0: # Adicionado 'and entidade.k_reflexao > 0' para otimização
             N_dot_V = N.dot(V)
             refletido_direcao = 2 * N * (N_dot_V) - V
@@ -181,52 +182,51 @@ def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundid
     
     #Reflexão recursiva
 
-    if profundidade_refracao < 3:                                #NOVO
-        if entidade.indice_refracao != 0:                        #NOVO
-            if isinstance(entidade, Esfera):                     #NOVO
-                V_dot_N = np.dot(V, N)                           #NOVO
-                if V_dot_N <= 0:                                 #NOVO
-                    N = N * -1                                   #NOVO
-                    V_dot_N = np.dot(V, N)                       #NOVO
-                if np.dot(V, N) > 0:                             #NOVO
-                    refracao_direcao = refract(                  #NOVO
-                        V, N * -1, n_in=entidade.indice_refracao, n_out=1.0  #NOVO
-                    )                                            #NOVO
-                else:                                            #NOVO
-                    refracao_direcao = refract(                  #NOVO
-                        V, N, n_in=1.0, n_out=entidade.indice_refracao       #NOVO
-                    )                                            #NOVO
-            else:                                                #NOVO
-                refracao_direcao = refract(                      #NOVO
-                    V, N, n_in=1.0, n_out=entidade.indice_refracao          #NOVO
-                )                                                #NOVO
-            if refracao_direcao is not None:                     #NOVO
-                refracao_direcao = refracao_direcao / np.linalg.norm(refracao_direcao) #NOVO
-                #refracao_origem = ponto_intersec                 #NOVO
+    if profundidade_refracao < 3:                                
+        if entidade.indice_refracao != 0:                        
+            if isinstance(entidade, Esfera):                     
+                V_dot_N = np.dot(V, N)                           
+                if V_dot_N <= 0:                                 
+                    N = N * -1                                   
+                    V_dot_N = np.dot(V, N)                       
+                if np.dot(V, N) > 0:                             
+                    refracao_direcao = refract(                  
+                        V, N * -1, n_in=entidade.indice_refracao, n_out=1.0  
+                    )                                            
+                else:                                            
+                    refracao_direcao = refract(                  
+                        V, N, n_in=1.0, n_out=entidade.indice_refracao       
+                    )                                            
+            else:                                                
+                refracao_direcao = refract(                      
+                    V, N, n_in=1.0, n_out=entidade.indice_refracao          
+                )                                                
+            if refracao_direcao is not None:                     
+                refracao_direcao = refracao_direcao / np.linalg.norm(refracao_direcao) 
+                #refracao_origem = ponto_intersec                 
                 refracao_origem = Ponto(
                     ponto_intersec.x + N[0] * 1e-4,
                     ponto_intersec.y + N[1] * 1e-4,
                     ponto_intersec.z + N[2] * 1e-4
                 )
 
-                raio_refratado = Ray(                            #NOVO
-                    Ponto(refracao_origem.x, refracao_origem.y, refracao_origem.z),    #NOVO
-                    Vetor(                                       #NOVO
-                        refracao_direcao[0], refracao_direcao[1], refracao_direcao[2]  #NOVO
-                    ),                                           #NOVO
-                )                                                #NOVO
-                cor_refratada = find_closest_intersection(       #NOVO
-                    raio_refratado,                              #NOVO
-                    entidades,                                   #NOVO
-                    profundidade_refracao=profundidade_refracao + 1, #NOVO
-                    profundidade_reflexao=profundidade_reflexao,     #NOVO
-                )                                                #NOVO
-                It = np.array(cor_refratada)                     #NOVO
-                cor = cor + entidade.k_refracao * It             #NOVO
+                raio_refratado = Ray(                            
+                    Ponto(refracao_origem.x, refracao_origem.y, refracao_origem.z),    
+                    Vetor(                                       
+                        refracao_direcao[0], refracao_direcao[1], refracao_direcao[2]  
+                    ),                                           
+                )                                                
+                cor_refratada = find_closest_intersection(       
+                    raio_refratado,                              
+                    entidades,                                   
+                    profundidade_refracao=profundidade_refracao + 1, 
+                    profundidade_reflexao=profundidade_reflexao,     
+                )                                                
+                It = np.array(cor_refratada)                     
+                cor = cor + entidade.k_refracao * It             
 
 #------------------------------------------------------------------------------------------------------------------
 
     cor_final = [min(255, max(0, int(i))) for i in cor] #garantia que cada canal RGB fique entre 0 e 255 (sem estouro)
 
     return cor_final
-
