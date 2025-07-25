@@ -1,5 +1,5 @@
 import numpy as np
-from phong_with_args import refract
+from phong_with_args import Ray
 from vectors import Ponto, Vetor
 from entidades import Mesh, Esfera, Plane
 from camera import Camera
@@ -7,7 +7,6 @@ from ray_casting import RayCasting
 
 
 def main():
-
 
     esfera_azul_nao = Esfera(
         center=Ponto(2, 0, 0),
@@ -51,7 +50,7 @@ def main():
     normal2 = (C - A).__cross__(D - A).__normalize__()
 
     # Criando malha a partir de 2 triângulos
-    mesh_quad = Mesh(
+    mesh_baixo = Mesh(
         triangle_quantity=2,
         vertices_quantity=4,
         vertices=[A, B, C, D],
@@ -59,8 +58,8 @@ def main():
         color=(0.4, 0.7, 1.0),  # Azul claro
         triangle_tuple_vertices=[(0, 1, 2), (0, 2, 3)],
         vertex_normals=[],
-        k_difuso=0.7,
-        k_ambiental=0.4,
+        k_difuso=1,
+        k_ambiental=1,
         k_especular=0.6,
         n_rugosidade=8.0,
         k_reflexao=0.3,
@@ -119,7 +118,7 @@ def main():
         up=Vetor(0, 1, 0),
     )
 
-    entidades = [esfera_azul_nao, esfera_azul, mesh_quad, mesh_esq, mesh_rdir]
+    entidades = [esfera_azul_nao, esfera_azul, mesh_baixo, mesh_esq, mesh_rdir]
 
     ray_casting.__generate_image__(entidades, 1, camera)
 
