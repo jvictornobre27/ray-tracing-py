@@ -1,271 +1,262 @@
+import numpy as np
+from phong_with_args import refract
 from vectors import Ponto, Vetor
-from entidades import Esfera, Mesh, Plane
+from entidades import Mesh, Esfera, Plane
 from camera import Camera
 from ray_casting import RayCasting
-from transformation import Transformacao
-import numpy as np
-
+from fonte_de_luz import Luz
 
 def main():
 
-    p0 = Ponto(10, 0, 0)
-    p1 = Ponto(0, 10, 0)
-    p2 = Ponto(-10, 0, 0)
-    p3 = Ponto(0, -10, 0)
-    p4 = Ponto(0, 0, 10)
-
-    v1 = p1 - p0
-    v2 = p4 - p0
-    normal1 = v1.__cross__(v2).__normalize__()
-
-    v3 = p2 - p1
-    v4 = p4 - p1
-    normal2 = v3.__cross__(v4).__normalize__()
-
-    v5 = p3 - p2
-    v6 = p4 - p2
-    normal3 = v5.__cross__(v6).__normalize__()
-
-    v7 = p0 - p3
-    v8 = p4 - p3
-    normal4 = v7.__cross__(v8).__normalize__()
-
- 
-    esfera_red = Esfera( #azul
-        center=Ponto(0, 0, 3),
-        radius=1,
-        color=(0, 0, 1),
-        k_difuso=1,
-        k_ambiental=1,
-        k_especular=1,
-        n_rugosidade=10,
-    )
-
-    esfera_green = Esfera(
-        center=Ponto(3, 0, 0),
-        radius=1,
-        color=(0, 1, 0),
-        k_difuso=0.1,
-        k_ambiental=1,
-        k_especular=0.1,
-        n_rugosidade=10,
-    )
-
-    esfera_blue = Esfera(
-        center=Ponto(0, 3, 0), #anda pra dir esq (+ esq)|cima e baixo (+ cima)|zoom perto/longe (+ perto) 
+    esfera_azul = Esfera(
+        center=Ponto(2, 0, -4),
         radius=1,
         color=(1, 0, 0),
-        k_difuso=0.1,
-        k_ambiental=0.1,
-        k_especular=1,
-        n_rugosidade=10,
-    )
-
-    esfera_orange = Esfera(
-        center=Ponto(-1, 0, 0), #anda pra dir esq (+ esq)|cima e baixo (+ cima)|zoom perto/longe (+ perto) 
-        radius=1,
-        color=(0, 0.5, 1),
-        k_difuso=1,
-        k_ambiental=0.1,
-        k_especular=0.1,
-        n_rugosidade=10,
-    )
-    """
-    esfera_metalica = Esfera(
-        center=Ponto(-3, 0, 0),
-        radius=1,
-        color=(0.8, 0.8, 0.8), #Cinza
-        k_difuso=0.6,
-        k_especular=0.95,
-        k_ambiental=0.2,
-        n_rugosidade=50,
-    )
-
-    esfera_fosca = Esfera(
-        center=Ponto(0, 3, 0),
-        radius=1,
-        color=(0.7, 0.2, 0.2), #azul
-        k_difuso=0.9,
-        k_especular=0.05,
-        k_ambiental=0.1,
-        n_rugosidade=10,
-    )
-
-    esfera_iluminada = Esfera(
-        center=Ponto(3, 0, 0),
-        radius=1,
-        color=(0.2, 0.8, 0.2), #verde
-        k_difuso=0.2,
-        k_especular=0.1,
-        k_ambiental=0.9,
-        n_rugosidade=10,
-    )
-
-    esfera_plastica = Esfera(
-        center=Ponto(0, 0, 1),
-        radius=1,
-        color=(0.1, 0.3, 0.9), #vermelha
         k_difuso=0.8,
-        k_especular=0.8,
         k_ambiental=0.4,
-        n_rugosidade=20,
-    )
-    """
-
-    ray_casting = RayCasting(hres=500, vres=500)
-
-    mesh = Mesh(
-        triangle_quantity=1,
-        vertices_quantity=5,
-        vertices=[p0, p1, p4],
-        triangle_normals=[normal1, normal2, normal3, normal4],
-        color=(0, 0, 255),
-        triangle_tuple_vertices=[(0, 1, 2)],
-        vertex_normals=[],
-        k_difuso=0.7,
-        k_especular=0.7,
-        k_ambiental=0.1,
-        k_reflexao=0.0,
-        k_transmissao=0.0,
-        n_rugosidade=2.0,
+        k_especular=0.8,
+        n_rugosidade=0.8,
+        k_reflexao=0.6,
+        k_refracao=5.0,
+        indice_refracao=0.3,
     )
 
-    camera = Camera(
-        target=Ponto(0, 0, 0),
-        position=Ponto(0, 0, 10),
-        up=Vetor(0, 1, 0),
+    esfera_vermelha = Esfera(
+        center=Ponto(2, 0, 4),
+        radius=1,
+        color=(0, 0, 1),
+        k_difuso=0.8,
+        k_ambiental=0.5,
+        k_especular=0.6,
+        n_rugosidade=0.8,
+        k_reflexao=0.7,
+        k_refracao=0.4,
+        indice_refracao=1.0,
     )
 
-    entidades = [esfera_red, esfera_blue, esfera_green, esfera_orange]
-    #entidades = [esfera_metalica, esfera_fosca, esfera_iluminada, esfera_plastica]
 
-
-    ray_casting.__generate_image__(entidades,1, camera)
-
-
-main()
-
-
-"""
-#Entrega 2 - Malha de triangulos e transformações
-def main():
-
-    ray_casting = RayCasting(hres=500, vres=500)
-    
-    plano = Plane(
-         point=Ponto(0, 3, 0),
-         normal=Vetor(0, 1, 0),
-         color=(255, 0, 0),
-     )
-
-    esfera = Esfera(
+    esfera_verde = Esfera(
         center=Ponto(2, 0, 0),
-        radius=4,
-        color=(0, 128, 0),
+        radius=2,
+        color=(0, 1, 0),
+        k_difuso=0.8,
+        k_ambiental=0.5,
+        k_especular=0.6,
+        n_rugosidade=0.8,
+        k_reflexao=0.7,
+        k_refracao=0.3,
+        indice_refracao=1.0,
     )
 
-#""
-    p0 = Ponto(5, 0, 0) #A
-    p1 = Ponto(0, 5, 0) #B
-    p2 = Ponto(-5, 0, 0) #C
-    p3 = Ponto(0, -5, 0) #D
-    p4 = Ponto(0, 0, 5) #E
+    esfera_amarela = Esfera(
+        center=Ponto(8, 2, 0), #(zoom, cima baixo, esq e dir)
+        radius=5,
+        color=(0, 1, 1),
+        k_difuso=0.8,
+        k_ambiental=0.5,
+        k_especular=0.6,
+        n_rugosidade=0.8,
+        k_reflexao=0.7,
+        k_refracao=0.8,
+        indice_refracao=1.0,
+    )
 
-    v1 = p1.__sub__(p0) #B-A
-    v2 = p4.__sub__(p0) #E-A
-    normal1 = v1.__cross__(v2).__normalize__()
+    esfera_white= Esfera(
+        center=Ponto(2, 4, 4), #(zoom, cima baixo, esq e dir)
+        radius=1,
+        color=(0.8, 1, 1),
+        k_difuso=0.8,
+        k_ambiental=0.5,
+        k_especular=0.6,
+        n_rugosidade=1,
+        k_reflexao=0.7,
+        k_refracao=0.3,
+        indice_refracao=1.0,
+    )
 
-    v3 = p2.__sub__(p1)  #C-B
-    v4 = p4.__sub__(p1) #E-B
-    normal2 = v3.__cross__(v4).__normalize__()
+    esfera_verde2= Esfera(
+        center=Ponto(-2, -2, 2), #(zoom, cima baixo, esq e dir)
+        radius=1,
+        color=(0.5, 1, 0.3),
+        k_difuso=0.8,
+        k_ambiental=0.5,
+        k_especular=0.6,
+        n_rugosidade=1,
+        k_reflexao=0.7,
+        k_refracao=0.3,
+        indice_refracao=1.0,
+    )
 
-    v5 = p3.__sub__(p2) #D-C
-    v6 = p4.__sub__(p2) #E-C
-    normal3 = v5.__cross__(v6).__normalize__()
+    A = Ponto(5, -3, -5)
+    B = Ponto(0, -3, -5)
+    C = Ponto(0, -3, 5)
+    D = Ponto(5, -3, 5)
+    #--
+    E = Ponto(0,3,5)
+    F = Ponto(0,3,-5)
+    G = Ponto(5,3,-5)
+    H = Ponto(5,3,5)
 
-    v7 = p0.__sub__(p3) #A-D
-    v8 = p4.__sub__(p3) #E-D
-    normal4 = v7.__cross__(v8).__normalize__()
+    # Normais para os dois triângulos da malha
+    normal1 = (B - A).__cross__(C - A).__normalize__()
+    normal2 = (C - A).__cross__(D - A).__normalize__()
 
-    mesh = Mesh(
-        triangle_quantity=4,
-        vertices_quantity=5,
-        vertices=[p0, p1, p2, p3, p4],
-        triangle_normals=[normal1, normal2, normal3, normal4],
-        color=(0, 25, 0),
-        triangle_tuple_vertices=[(0, 1, 4), (1, 2, 4), (2, 3, 4), (0, 3, 4)], #Basicamente (A,B,E) (B,C,E) (C,D,E) (A,D,E)
+    mesh_baixo = Mesh(
+        triangle_quantity=2,
+        vertices_quantity=4,
+        vertices=[A, B, C, D],
+        triangle_normals=[normal1, normal2],
+        color=(0.4, 0.7, 1.0), 
+        triangle_tuple_vertices=[(0, 1, 2), (0, 2, 3)],
         vertex_normals=[],
+        k_difuso=1,
+        k_ambiental=1,
+        k_especular=0.6,
+        n_rugosidade=8.0,
+        k_reflexao=0.3,
+        k_refracao=0,
+        indice_refracao=0,
     )
-#""
-#""
-    p0a = Ponto(2, 0, 0)
-    p1a = Ponto(-2, 2, 0)
-    p2a = Ponto(-2, -2, 0)
 
+    normal3 = (H - E).__cross__(D - E).__normalize__()
+    normal4 = (D - E).__cross__(C - E).__normalize__()
 
-    v1a = p1a.__sub__(p0a)
-    v2a = p2a.__sub__(p0a)
-    normala = v1a.__cross__(v2a).__normalize__()
-
-    mesh = Mesh(
-        triangle_quantity=1,
-        vertices_quantity=3,
-        vertices=[p0a, p1a, p2a],
-        triangle_normals=[normala],
-        color=(0, 255, 255),
-        triangle_tuple_vertices=[(0, 1, 2)],
+    mesh_dir = Mesh(
+        triangle_quantity=2,
+        vertices_quantity=4,
+        vertices=[E, H, D, C],
+        triangle_normals=[normal3, normal4],
+        color=(1.0, 0.7, 0.4),
+        triangle_tuple_vertices=[(0, 1, 2), (0, 2, 3)],
         vertex_normals=[],
-    )
-#""
-    #esfera = Transformacao.translate_sphere(esfera, 10, 0, 0)
-
-    camera = Camera(
-        target=Ponto(0, 0, 0),
-        #position=Ponto(0, 0, 10), #Camera 1
-        position=Ponto(0, 10, 2), #Camera 3
-        up=Vetor(0, -1, 0)
+        k_difuso=1,
+        k_ambiental=1,
+        k_especular=0.5,
+        n_rugosidade=8.0,
+        k_reflexao=0.3,
+        k_refracao=0,
+        indice_refracao=0,
     )
 
-    entidades = [mesh]
+    normal5 = (F - G).__cross__(B - G).__normalize__()
+    normal6 = (B - G).__cross__(A - G).__normalize__()
 
-    ray_casting.__generate_image__(entidades, 1, camera)
+    mesh_esq = Mesh(
+        triangle_quantity=2,
+        vertices_quantity=4,
+        vertices=[G, F, B, A],  
+        triangle_normals=[normal5, normal6],
+        color=(0.4, 1.0, 0.7),
+        triangle_tuple_vertices=[(0, 1, 2), (0, 2, 3)],
+        vertex_normals=[],
+        k_difuso=1,
+        k_ambiental=1,
+        k_especular=0.5,
+        n_rugosidade=8.0,
+        k_reflexao=0.3,
+        k_refracao=0,
+        indice_refracao=0,
+    )
+
+    normal7 = (A - G).__cross__(H - G).__normalize__()
+    normal8 = (H - G).__cross__(D - G).__normalize__()
+
+    mesh_tras = Mesh(
+        triangle_quantity=2,
+        vertices_quantity=4,
+        vertices=[G, F, A, D],  
+        triangle_normals=[normal7, normal8],
+        color=(0.4, 1.0, 0.7),
+        triangle_tuple_vertices=[(0, 1, 2), (0, 2, 3)],
+        vertex_normals=[],
+        k_difuso=1,
+        k_ambiental=1,
+        k_especular=0.5,
+        n_rugosidade=8.0,
+        k_reflexao=0.3,
+        k_refracao=0,
+        indice_refracao=0,
+    )
+
+    esfera_branca = Esfera(
+        center=Ponto(15, -2, 0),    
+        radius=1.5,
+        color=(1, 1, 1),         
+        k_difuso=0.6,             
+        k_ambiental=0.8,          
+        k_especular=0.9,         
+        n_rugosidade=32,          
+        k_reflexao=0.2,         
+        k_refracao=0,           
+        indice_refracao=1.5      
+    )
+    esfera_roxa = Esfera(
+        center=Ponto(15, 2, 0),    
+        radius=1.5,
+        color=(1, 0, 0.5),          
+        k_difuso=0.6,             
+        k_ambiental=0.8,          
+        k_especular=0.9,         
+        n_rugosidade=32,          
+        k_reflexao=0.2,          
+        k_refracao=0,           
+        indice_refracao=1.5       
+    )
+
+    esfera_transparente = Esfera(
+        center=Ponto(12, 0, 0),      
+        radius=2,
+        color=(1, 1, 1),            
+
+        # --- Parâmetros Chave para Transparência ---
+        k_difuso=0,              
+        k_ambiental=0,           
+        k_especular=0.9,           
+        n_rugosidade=32,           
+        k_reflexao=0.8,             
+
+        # --- Parâmetros para Refração ---
+        k_refracao=0.9,             
+        indice_refracao=0.5         
+    )
 
 
-main()
-"""
+    ray_casting = RayCasting(hres=700, vres=700)
 
-#------------------------------------------------------------------------
-
-""" 
-#Entrega 1 - Interseção plano/esfera
-
-    camera = Camera(
-        target=Ponto(5, 0, 0),
-        position=Ponto(0, 5, 0),
+    #(zoom, cima baixo, esq e dir)
+    camera1 = Camera(
+        target=Ponto(10, 0, 0),
+        position=Ponto(-15, 0, 0),
         up=Vetor(0, 1, 0),
-        hres=300,
-        vres=300
     )
 
-    #normal_plano = (Ponto(4, 0, 0) - camera.position).__normalize__()
-    normal_plano = Vetor(0, 1, 0)
-
-    #point_plano = Ponto(7, 0, 0)
-    point_plano = Ponto(0, 0, 0)
-
-    plano = Plane(
-        point=point_plano,
-        normal=normal_plano,
-        color=(255, 0, 0),
+    camera2 = Camera(
+        target=Ponto(10, 0, 0),
+        position=Ponto(-10, 0, 0),
+        up=Vetor(0, 1, 0),
     )
 
-    esfera = Esfera(center=Ponto(4, 0, 0), radius=1, color=(0, 0, 100))
-    esfera2 = Esfera(center=Ponto(6, 0, 0), radius=1, color=(0, 200, 0))
+    luzes_da_cena = [
+        #Luz(0, 10, -5, [255, 255, 255]),
+        Luz(-15, 10, 0, [255, 255, 255])
+    ]
 
-    entidades = [esfera, esfera2, plano]
 
-    raycaster = RayCasting(hres=camera.hres, vres=camera.vres)
-    raycaster.__generate_image__(entidades, distancia=1, camera=camera)
+    #Exemplo 1 (3 esferas ao lado uma da outra com uma malha no lado esquerdo apenas)
+    entidades1 = [esfera_vermelha, esfera_azul, mesh_dir, esfera_verde]
+
+    #Exemplo 2 (3 esferas, 2 ao lado uma da outra com malhas nos lado esq, dir e abaixo e uma esfera grandona atrás)
+    entidades2 = [esfera_vermelha, esfera_azul, esfera_amarela, mesh_dir, mesh_esq, mesh_baixo]
+
+    #Exemplo 3 (4 esferas, 3 pequenas e 1 maior onde há reflexão mútua entre si)
+    entidades3 = [esfera_vermelha, esfera_azul, esfera_amarela, esfera_white]
+
+    #Exemplo 4 (3 esferas, 2 ao lado uma da outra com malhas nos lado esq, dir e abaixo e uma esfera grandona atrás)
+    entidades4 = [esfera_vermelha, esfera_azul, mesh_dir, mesh_esq, mesh_baixo, mesh_tras, esfera_transparente]
+
+    #Exemplo 5 (3 esferas, 2 opacas e 1 de vidro, mostrando o poder da refração)
+    entidades5 = [esfera_transparente, esfera_branca, esfera_roxa]
+
+    ray_casting.__generate_image__(entidades5, luzes_da_cena, 1, camera2)
 
 main()
-"""

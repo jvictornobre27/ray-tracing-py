@@ -1,4 +1,5 @@
-from vectors import Ponto #OK
+
+from vectors import Ponto 
 
 class Esfera: #Representa uma esfera 3D
     
@@ -14,6 +15,8 @@ class Esfera: #Representa uma esfera 3D
         k_reflexao=0.0,  # Coeficiente de reflexão (>= 0 e <= 1)
         k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
         n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
+        k_refracao=0.0,               
+        indice_refracao=0.0,          
         ): 
         # inicializando a esfera
         self.center = center 
@@ -24,8 +27,21 @@ class Esfera: #Representa uma esfera 3D
         self.k_ambiental = k_ambiental  
         self.k_reflexao = k_reflexao  
         self.k_transmissao = k_transmissao  
-        self.n_rugosidade = n_rugosidade  
+        self.n_rugosidade = n_rugosidade
+        self.k_refracao = k_refracao       
+        self.indice_refracao = indice_refracao     
 
+    def __get_normal_vector_to_intersection_point__(self, intersection_point):
+        """
+        Calcula o vetor normal à superfície da esfera no ponto de interseção fornecido, que
+        é perpendicular à superfície da esfera no ponto de interseção e aponta para fora do centro da esfera.
+        """
+        return [
+            intersection_point.x - self.center.x, # Componente x do vetor normal no ponto de interseção
+            intersection_point.y - self.center.y, # Componente y do vetor normal no ponto de interseção
+            intersection_point.z - self.center.z, # Componente z do vetor normal no ponto de interseção
+        ]
+    
     def __intersect_line__(self, line_point, line_vector): #determina se um raio interceptou a esfera, e retorna o ponto de interseção mais próximo da câmera ou seja resolve a equação do 2º grau: a·t² + b·t + c = 0
 
         a = sum(i * j for i, j in zip(line_vector, line_vector)) #produto escalar do vetor com ele mesmo: |v|² = v·v = x² + y² + z²
@@ -42,22 +58,32 @@ class Esfera: #Representa uma esfera 3D
 
         discriminant = b**2 - 4 * a * c #delta que indica se a eq quadrática tem solução real, ou seja se o raio intersecta a esfera.
 
-        if discriminant <= 0: #se delta = 0 não há interseção
+        if discriminant <= 0: #se delta <= 0 não há interseção real
             return None
         
         #se delta > 0 ent calculamos as possiveis soluções
         t1 = (-b + discriminant**0.5) / (2 * a)
         t2 = (-b - discriminant**0.5) / (2 * a)
 
-        #retorna o ponto de interseção mais próximo na frente da câmera
-        if 0 < t1 < t2:
-            return tuple(p + t1 * v for p, v in zip(line_point, line_vector))
-        if 0 < t2 < t1:
-            return tuple(p + t2 * v for p, v in zip(line_point, line_vector))
+        # <<< MUDANÇA AQUI >>>
+        # Lógica mais robusta para encontrar a interseção correta e na frente da câmera.
+        epsilon = 0.0001
+        
+        # Pega a menor e a maior solução
+        t_min = min(t1, t2)
+        t_max = max(t1, t2)
 
+        # Verifica se a menor solução (mais próxima) é válida (na frente do raio)
+        if t_min > epsilon:
+            return tuple(p + t_min * v for p, v in zip(line_point, line_vector))
+        
+        # Se a mais próxima não for válida, verifica a mais distante (caso o raio comece de dentro da esfera)
+        if t_max > epsilon:
+            return tuple(p + t_max * v for p, v in zip(line_point, line_vector))
+        
+        # Se nenhuma for válida, não há interseção.
         return None
-
-
+    
 class Plane: #representa um plano 3D
     # definição do plano e seus parametros, adicionando os coeficientes do material para a Terceira Entrega
     def __init__(
@@ -68,9 +94,11 @@ class Plane: #representa um plano 3D
         k_difuso=0.0,  # Coeficiente difuso (>= 0 e <= 1)
         k_especular=0.0,  # Coeficiente especular (>= 0 e <= 1)
         k_ambiental=0.0,  # Coeficiente ambiental (>= 0 e <= 1)
-        k_reflexao=0.0,  # Coeficiente de reflexão (>= 0 e <= 1)
         k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
         n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
+        k_reflexao=0.0,  # Coeficiente de reflexão (>= 0 e <= 1)
+        k_refracao=0.0,                
+        indice_refracao=0.0,           
         ): 
         # inicializando o plano
         self.point = point
@@ -82,20 +110,27 @@ class Plane: #representa um plano 3D
         self.k_reflexao = k_reflexao
         self.k_transmissao = k_transmissao
         self.n_rugosidade = n_rugosidade
-
+        self.k_refracao = k_refracao       
+        self.indice_refracao = indice_refracao     
+#-----------------------------------------------------------------------------
+    
     def __intersect_line__(self, line_point, line_vector): #calcula o ponto de interseção entre uma linha (definida por um ponto e um vetor direção) e o plano
+            
+            d = tuple(p - lp for p, lp in zip(self.point, line_point)) #vetor d que vai do ponto da linha até o ponto do plano 
+            
+            denominator = sum(n * lv for n, lv in zip(self.normal, line_vector)) #prod escalar entre o vetor normal do plano e o vetor direção da linha 
 
-        d = tuple(p - lp for p, lp in zip(self.point, line_point)) #vetor d que vai do ponto da linha até o ponto do plano 
+            if denominator == 0: #produto escalar zero a linha é paralela ao plano e não há interseção
+                return None
+            
+            t = sum(n * dp for n, dp in zip(self.normal, d)) / denominator #calcula o "quanto andar" (parâmetro t) para alcançar o plano ao longo do vetor da linha
 
-        denominator = sum(n * lv for n, lv in zip(self.normal, line_vector)) #prod escalar entre o vetor normal do plano e o vetor direção da linha 
-
-        if denominator == 0: #produto escalar zero a linha é paralela ao plano e não há interseção
-            return None
-            #return (False, None)
-        
-        t = sum(n * dp for n, dp in zip(self.normal, d)) / denominator #calcula o "quanto andar" (parâmetro t) para alcançar o plano ao longo do vetor da linha
-
-        return tuple(lp + t * lv for lp, lv in zip(line_point, line_vector)) #achar as coordenadas exatas do ponto de interseção
+            # <<< MUDANÇA AQUI >>>
+            # Verifica se a interseção ocorre NA FRENTE do raio. Se t for negativo, a interseção está atrás.
+            if t > 0.0001:
+                return tuple(lp + t * lv for lp, lv in zip(line_point, line_vector)) #achar as coordenadas exatas do ponto de interseção
+            
+            return None # Se t for negativo ou muito pequeno, não há interseção válida.
 
 #----------------------------SEGUNDA ENTREGA ADICIONAIS--------------------------------------------------------------------------
 
@@ -116,6 +151,9 @@ class Mesh: #representa uma malha
         k_reflexao=0.0,  # Coeficiente de reflexão (>= 0 e <= 1)
         k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
         n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
+        k_refracao=0.0,                
+        indice_refracao=0.0,           
+        normal_to_intersection_point=None,  # Vetor normal no ponto de interseção
     ):
         self.triangle_quantity = triangle_quantity
         self.vertices_quantity = vertices_quantity
@@ -123,14 +161,22 @@ class Mesh: #representa uma malha
         self.triangle_tuple_vertices = triangle_tuple_vertices #lista de tuplas com índices de vértices que formam os triângulos
         self.triangle_normals = triangle_normals #uma normal (vetor perpendicular) para cada triângulo
         self.vertex_normals = vertex_normals
+        self.normal_to_intersection_point = None
         self.k_difuso = k_difuso
         self.k_especular = k_especular
         self.k_ambiental = k_ambiental
         self.k_reflexao = k_reflexao
         self.k_transmissao = k_transmissao
         self.n_rugosidade = n_rugosidade
+        self.k_refracao = k_refracao       
+        self.indice_refracao = indice_refracao     
 
         self.color = color
+        self.k_difuso = k_difuso
+        self.k_especular = k_especular
+        self.n_rugosidade = n_rugosidade
+        self.k_ambiental = k_ambiental
+        self.normal_to_intersection_point = normal_to_intersection_point
 
     def __point_in_triangle__(self, point, triangle_vertices): #Verifica se um ponto esta dentro de um triangulo usando coord baricentrica
 
@@ -173,6 +219,7 @@ class Mesh: #representa uma malha
                 )
                 #vê se o ponto está dentro do triângulo e o devolve caso sim
                 if self.__point_in_triangle__(intersection_point, triangle_vertices):
+                    self.normal_to_intersection_point = triangle_normal # normal do triângulo que foi atingido
                     return (
                         intersection_point.x,
                         intersection_point.y,
