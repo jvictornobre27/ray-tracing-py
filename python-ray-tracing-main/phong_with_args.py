@@ -2,6 +2,7 @@ import numpy as np
 from entidades import Esfera, Plane, Mesh
 from vectors import Ponto, Vetor
 from fonte_de_luz import Luz
+from ray import Ray
 
 """
 Fórmula que queremos satisfazer
