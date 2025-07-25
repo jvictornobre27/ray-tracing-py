@@ -1,6 +1,8 @@
 import numpy as np
 from entidades import Esfera, Plane, Mesh
-from vectors import Ponto
+from vectors import Ponto, Vetor
+from fonte_de_luz import Luz
+from ray import Ray
 
 """
 Fórmula que queremos satisfazer
@@ -11,8 +13,39 @@ I = I_a * k_a + sum_lights( I_l * [ k_d * (N · L) + k_s * (R · V)^n ] )
 def clamp(minimum, x, maximum):
     return max(minimum, min(x, maximum))
 
+def find_closest_intersection(
+    ray, entidades, profundidade_reflexao, profundidade_refracao   
+):                                                                 
+    """                                                            
+    Encontra a entidade mais próxima e o ponto de interseção com base no raio fornecido.
+    """                                                           
+
+    color = [0, 0, 0]                                            
+    min_distance = float("inf")                                    
+
+    for entidade in entidades:                                     
+        intersection = entidade.__intersect_line__(                
+            (ray.origin),                                          
+            (ray.direction),                                      
+        )                                                          
+        if intersection:                                          
+            distance_vetor = Vetor(intersection[0], intersection[1], intersection[2])     
+            distance = ray.origin.__distance__(distance_vetor)     
+            if distance < min_distance:                            
+                min_distance = distance                            
+                color = phong(                                     
+                    entidade,                                      
+                    [Luz(0, 5, 5, [255, 255, 255])],               
+                    Ponto(intersection[0], intersection[1], intersection[2]), 
+                    ray.origin,                                   
+                    entidades,                                     
+                    profundidade_reflexao,                         
+                    profundidade_refracao,                         
+                )                                                  
+    return color                                                   
+
 #calcula a cor no ponto onde o raio bateu
-def phong(entidade, luzes, ponto_intersec, camera_position):
+def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundidade_reflexao=0, profundidade_refracao=0):
     
     Ia = np.array([50, 50, 50])  #intensidade da luz ambiente (claridade) -> I_a na fórmula
 
@@ -96,6 +129,36 @@ def phong(entidade, luzes, ponto_intersec, camera_position):
     #Agora somamos a luz ambiente (independe de luzes pontuais)
     # I_a * k_a (luz ambiente)
     cor = (Ia * entidade.k_ambiental) + i_sum
+
+    # Adicionar reflexão recursiva
+    if profundidade_reflexao < 3 and entidade.k_reflexao > 0: # Adicionado 'and entidade.k_reflexao > 0' para otimização
+            N_dot_V = N.dot(V)
+            refletido_direcao = 2 * N * (N_dot_V) - V
+            refletido_direcao = refletido_direcao / np.linalg.norm(refletido_direcao)
+
+            # A origem do raio refletido precisa ser um pouco deslocada para fora da superfície
+            # para evitar que ele atinja o próprio objeto que o refletiu.
+            epsilon = 0.0001
+            offset_normal = N * epsilon
+            
+            # Criamos um novo Ponto de origem, já com o deslocamento
+            origem_com_offset = Ponto(ponto_intersec.x + offset_normal[0], 
+                                    ponto_intersec.y + offset_normal[1], 
+                                    ponto_intersec.z + offset_normal[2])
+
+            raio_refletido = Ray(
+                origem_com_offset, # Usamos a nova origem deslocada
+                Vetor(refletido_direcao[0], refletido_direcao[1], refletido_direcao[2]),
+            )
+            cor_refletida = find_closest_intersection(
+                raio_refletido,
+                entidades,
+                profundidade_reflexao=profundidade_reflexao + 1,
+                profundidade_refracao=profundidade_refracao,
+            )
+            if cor_refletida: # Checa se a cor refletida não é nula
+                Ir = np.array(cor_refletida)
+                cor = cor + entidade.k_reflexao * Ir
 
     cor_final = [min(255, max(0, int(i))) for i in cor] #garantia que cada canal RGB fique entre 0 e 255 (sem estouro)
 
