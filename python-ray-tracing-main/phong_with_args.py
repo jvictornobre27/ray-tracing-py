@@ -1,14 +1,8 @@
 import numpy as np
 from entidades import Esfera, Plane, Mesh
 from vectors import Ponto, Vetor
-<<<<<<< HEAD
-from fonte_de_luz import Luz                       
-from ray import Ray                                
-
-=======
 from fonte_de_luz import Luz
 from ray import Ray
->>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
 
 """
 Fórmula que queremos satisfazer:
@@ -25,29 +19,17 @@ def find_closest_intersection(
 ):                                                                 
     """                                                            
     Encontra a entidade mais próxima e o ponto de interseção com base no raio fornecido.
-<<<<<<< HEAD
-    """                                                            
-
-    color = [0, 0, 0]                                              
-=======
     """                                                           
 
     color = [0, 0, 0]                                            
->>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
     min_distance = float("inf")                                    
 
     for entidade in entidades:                                     
         intersection = entidade.__intersect_line__(                
             (ray.origin),                                          
-<<<<<<< HEAD
-            (ray.direction),                                       
-        )                                                          
-        if intersection:                                           
-=======
             (ray.direction),                                      
         )                                                          
         if intersection:                                          
->>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
             distance_vetor = Vetor(intersection[0], intersection[1], intersection[2])     
             distance = ray.origin.__distance__(distance_vetor)     
             if distance < min_distance:                            
@@ -56,38 +38,14 @@ def find_closest_intersection(
                     entidade,                                      
                     [Luz(0, 5, 5, [255, 255, 255])],               
                     Ponto(intersection[0], intersection[1], intersection[2]), 
-<<<<<<< HEAD
-                    ray.origin,                                    
-=======
                     ray.origin,                                   
->>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
                     entidades,                                     
                     profundidade_reflexao,                         
                     profundidade_refracao,                         
                 )                                                  
     return color                                                   
 
-<<<<<<< HEAD
-def refract(V, N, n_in, n_out):                    
-    """                                            
-    Calcula o vetor de refração usando a Lei de Snell.
-    """                                            
-    n = n_in / n_out                               
-    cos_teta_1 = np.dot(N, -V)                     
-    inner = 1 - n**2 * (1 - cos_teta_1**2)         
-    if inner < 0:                                  
-        # Reflexão total interna, não tem refração 
-        return None                                
-    cos_teta_2 = np.sqrt(inner)                    
-    V_refratado = n * V + (n * cos_teta_1 - cos_teta_2) * N 
-    if cos_teta_1 <= 0:                            
-        V_refratado = n * V + (n * cos_teta_1 + cos_teta_2) * N 
-    return V_refratado                             
 
-
-
-=======
->>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
 #calcula a cor no ponto onde o raio bateu
 def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundidade_reflexao=0, profundidade_refracao=0):
     
