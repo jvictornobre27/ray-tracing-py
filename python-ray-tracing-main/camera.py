@@ -5,6 +5,7 @@ from phong_with_args import phong
 from fonte_de_luz import Luz
 from ray import Ray
 
+
 class Camera:
     def __init__(self, target, position, up, vres=300, hres=300):
         self.position = position

@@ -1,9 +1,14 @@
 import numpy as np
 from entidades import Esfera, Plane, Mesh
 from vectors import Ponto, Vetor
+<<<<<<< HEAD
 from fonte_de_luz import Luz                       
 from ray import Ray                                
 
+=======
+from fonte_de_luz import Luz
+from ray import Ray
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
 
 """
 Fórmula que queremos satisfazer:
@@ -20,17 +25,29 @@ def find_closest_intersection(
 ):                                                                 
     """                                                            
     Encontra a entidade mais próxima e o ponto de interseção com base no raio fornecido.
+<<<<<<< HEAD
     """                                                            
 
     color = [0, 0, 0]                                              
+=======
+    """                                                           
+
+    color = [0, 0, 0]                                            
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
     min_distance = float("inf")                                    
 
     for entidade in entidades:                                     
         intersection = entidade.__intersect_line__(                
             (ray.origin),                                          
+<<<<<<< HEAD
             (ray.direction),                                       
         )                                                          
         if intersection:                                           
+=======
+            (ray.direction),                                      
+        )                                                          
+        if intersection:                                          
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
             distance_vetor = Vetor(intersection[0], intersection[1], intersection[2])     
             distance = ray.origin.__distance__(distance_vetor)     
             if distance < min_distance:                            
@@ -39,13 +56,18 @@ def find_closest_intersection(
                     entidade,                                      
                     [Luz(0, 5, 5, [255, 255, 255])],               
                     Ponto(intersection[0], intersection[1], intersection[2]), 
+<<<<<<< HEAD
                     ray.origin,                                    
+=======
+                    ray.origin,                                   
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
                     entidades,                                     
                     profundidade_reflexao,                         
                     profundidade_refracao,                         
                 )                                                  
     return color                                                   
 
+<<<<<<< HEAD
 def refract(V, N, n_in, n_out):                    
     """                                            
     Calcula o vetor de refração usando a Lei de Snell.
@@ -64,6 +86,8 @@ def refract(V, N, n_in, n_out):
 
 
 
+=======
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
 #calcula a cor no ponto onde o raio bateu
 def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundidade_reflexao=0, profundidade_refracao=0):
     
@@ -146,11 +170,15 @@ def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundid
     # I_a * k_a (luz ambiente)
     cor = (Ia * entidade.k_ambiental) + i_sum
 
+<<<<<<< HEAD
 #------------------------------------------------------------------------------------------------------------------
     if profundidade_reflexao >= 3 and profundidade_refracao >= 3:    
         return [51, 51, 51]                                          
     
     # Adicionar reflexão recursiva                        
+=======
+    # Adicionar reflexão recursiva
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
     if profundidade_reflexao < 3 and entidade.k_reflexao > 0: # Adicionado 'and entidade.k_reflexao > 0' para otimização
             N_dot_V = N.dot(V)
             refletido_direcao = 2 * N * (N_dot_V) - V
@@ -179,6 +207,7 @@ def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundid
             if cor_refletida: # Checa se a cor refletida não é nula
                 Ir = np.array(cor_refletida)
                 cor = cor + entidade.k_reflexao * Ir
+<<<<<<< HEAD
     
     #Reflexão recursiva
 
@@ -226,6 +255,8 @@ def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundid
                 cor = cor + entidade.k_refracao * It             
 
 #------------------------------------------------------------------------------------------------------------------
+=======
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
 
     cor_final = [min(255, max(0, int(i))) for i in cor] #garantia que cada canal RGB fique entre 0 e 255 (sem estouro)
 

@@ -28,8 +28,13 @@ class Esfera: #Representa uma esfera 3D
         self.k_reflexao = k_reflexao  
         self.k_transmissao = k_transmissao  
         self.n_rugosidade = n_rugosidade
+<<<<<<< HEAD
         self.k_refracao = k_refracao      
         self.indice_refracao = indice_refracao    
+=======
+        self.k_refracao = k_refracao
+        self.indice_refracao = indice_refracao
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
 
     def __get_normal_vector_to_intersection_point__(self, intersection_point):
         """
@@ -98,7 +103,11 @@ class Plane: #representa um plano 3D
         k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
         n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
         k_refracao=0.0,               
+<<<<<<< HEAD
         indice_refracao=0.0,          
+=======
+        indice_refracao=0.0,
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
         ): 
         # inicializando o plano
         self.point = point
@@ -110,10 +119,16 @@ class Plane: #representa um plano 3D
         self.k_reflexao = k_reflexao
         self.k_transmissao = k_transmissao
         self.n_rugosidade = n_rugosidade
+<<<<<<< HEAD
         self.k_refracao = k_refracao      
         self.indice_refracao = indice_refracao    
 #-----------------------------------------------------------------------------
     
+=======
+        self.k_refracao = k_refracao
+        self.indice_refracao = indice_refracao
+
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
     def __intersect_line__(self, line_point, line_vector): #calcula o ponto de interseção entre uma linha (definida por um ponto e um vetor direção) e o plano
             
             d = tuple(p - lp for p, lp in zip(self.point, line_point)) #vetor d que vai do ponto da linha até o ponto do plano 
@@ -152,7 +167,11 @@ class Mesh: #representa uma malha
         k_transmissao=0.0,  # Coeficiente de transmissão (>= 0 e <= 1)
         n_rugosidade=0.0,  # Coeficiente de rugosidade (> 0)
         k_refracao=0.0,               
+<<<<<<< HEAD
         indice_refracao=0.0,          
+=======
+        indice_refracao=0.0,
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
         normal_to_intersection_point=None,  # Vetor normal no ponto de interseção
     ):
         self.triangle_quantity = triangle_quantity
@@ -168,8 +187,13 @@ class Mesh: #representa uma malha
         self.k_reflexao = k_reflexao
         self.k_transmissao = k_transmissao
         self.n_rugosidade = n_rugosidade
+<<<<<<< HEAD
         self.k_refracao = k_refracao      
         self.indice_refracao = indice_refracao    
+=======
+        self.k_refracao = k_refracao
+        self.indice_refracao = indice_refracao
+>>>>>>> 3690121782a231f6b125acf1cab2be1414203b90
 
         self.color = color
         self.k_difuso = k_difuso
