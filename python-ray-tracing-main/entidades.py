@@ -28,8 +28,9 @@ class Esfera: #Representa uma esfera 3D
         self.k_reflexao = k_reflexao  
         self.k_transmissao = k_transmissao  
         self.n_rugosidade = n_rugosidade
-        self.k_refracao = k_refracao      
-        self.indice_refracao = indice_refracao    
+        self.k_refracao = k_refracao
+        self.indice_refracao = indice_refracao
+
 
     def __get_normal_vector_to_intersection_point__(self, intersection_point):
         """
