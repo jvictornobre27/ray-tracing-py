@@ -167,7 +167,6 @@ class Mesh: #representa uma malha
         normal_to_intersection_point=None,  # Vetor normal no ponto de interseção
         k_refracao=0.0,                
         indice_refracao=0.0,           
-        normal_to_intersection_point=None,  # Vetor normal no ponto de interseção
     ):
         self.triangle_quantity = triangle_quantity
         self.vertices_quantity = vertices_quantity
