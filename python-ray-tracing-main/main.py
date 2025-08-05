@@ -223,11 +223,6 @@ def main():
     ray_casting = RayCasting(hres=700, vres=700)
 
     #(zoom, cima baixo, esq e dir)
-    camera1 = Camera(
-        target=Ponto(10, 0, 0),
-        position=Ponto(-15, 0, 0),
-    )
-
     camera = Camera(
         target=Ponto(5, 0, 0),
         position=Ponto(0, 5, 0),
