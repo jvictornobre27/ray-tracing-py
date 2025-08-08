@@ -71,15 +71,37 @@ class Toro:
                 pontos_superficie.append(ponto)
 
         triangulos = []
-        
+
         # Número de divisões em theta por dimensão
         n = len(theta_values) - 1 
-
-        # Geração dos triângulos
+        """
+        Geração dos triângulos:
+        
+        Cada divisão da grade se tornam dois triângulos
+        Cada triângulo é formado por três pontos, então cada triângulo é representado por uma tupla de três índices
+        O número de triângulos é n * n * 2
+        
+        (i,j+1) -------- (i+1,j+1)
+           |  \             |
+           |    \     T2    |
+           |      \         |
+           | T1     \       |
+           |          \     |
+        (i,j) -------- (i+1,j)
+        """
         for i in range(n): 
             for j in range(n):
-                triangulos.append((i * (n + 1) + j, (i + 1) * (n + 1) + j, i * (n + 1) + j + 1))
-                triangulos.append(((i + 1) * (n + 1) + j, (i + 1) * (n + 1) + j + 1, i * (n + 1) + j + 1))
+                triangulos.append((
+                    i * (n + 1) + j,        # Ponto atual
+                    (i + 1) * (n + 1) + j,  # Ponto de baixo
+                    i * (n + 1) + j + 1     # Ponto da direita
+                ))
+
+                triangulos.append((
+                    (i + 1) * (n + 1) + j,      # Ponto de baixo
+                    (i + 1) * (n + 1) + j + 1,  # Ponto de baixo e a direita
+                    i * (n + 1) + j + 1         # Ponto da direita
+                ))
 
         lista_normais = []
 
@@ -113,11 +135,11 @@ class Toro:
             triangle_normals=lista_normais,
             vertex_normals=[],
             color=self.cor,
-            k_ambiental=0.5,
-            k_difuso=0.5,
-            k_especular=0.5,
-            n_rugosidade=50,
-            k_reflexao=0,
+            k_ambiental=0.2,
+            k_difuso=0.3,
+            k_especular=0.8,
+            n_rugosidade=100,
+            k_reflexao=0.6,
             k_refracao=0,
             indice_refracao=0
         )
