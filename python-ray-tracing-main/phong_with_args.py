@@ -92,9 +92,9 @@ def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundid
     elif isinstance(entidade, Mesh):
         #P/ uma malaha, pode ter uma normal calculada no ponto
         N = np.array([
-            entidade.normal_to_intersection_point.x,
-            entidade.normal_to_intersection_point.y,
-            entidade.normal_to_intersection_point.z,
+            ponto_intersec.x,
+            ponto_intersec.y,
+            ponto_intersec.z,
         ])
 
     #vemos se tem normal e normalizamos (sempre queremos vetores unitários)
@@ -143,7 +143,7 @@ def phong(entidade, luzes, ponto_intersec, camera_position, entidades, profundid
     # I_a * k_a (luz ambiente)
     cor = (Ia * entidade.k_ambiental) + i_sum
 
-    if profundidade_reflexao >= 3 and profundidade_refracao >= 3:    #NOVO
+    if profundidade_reflexao >= 3 and profundidade_refracao >= 3:
         return [51, 51, 51]
 
     # Adicionar reflexão recursiva
