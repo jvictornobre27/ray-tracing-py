@@ -23,7 +23,7 @@ def main():
         cor = (0.5, 0, 0.5)
     )
     
-    malha_toro = toro.triangulate(math.pi/12) # Espaçamento pequeno para mais detalhes (rendereização demorada)
+    malha_toro = toro.triangulate(math.pi/12) # Espaçamento pequeno para mais detalhes (renderização demorada)
     entidades = [malha_toro]
 
     ray_casting = RayCasting(hres = 500, vres = 500)
