@@ -64,7 +64,7 @@ class Toro:
         theta_values = toRadians(espacamento)
         alpha_values = toRadians(espacamento)
 
-        # Gera todos os pontos da superfícei em ordem
+        # Gera todos os pontos da superfície em ordem
         for theta in theta_values:
             for alpha in alpha_values:
                 ponto = self.point_on_surface(theta, alpha)

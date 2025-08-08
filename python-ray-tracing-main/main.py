@@ -10,19 +10,20 @@ from toro import Toro
 def main():
 
     camera = Camera(
-        target=Ponto(1, 0, 0),
-        position=Ponto(-2, 2, 0.7),
+        target=Ponto(0, 0, 0),
+        position=Ponto(-1.5, -1.5, 1),
         up=Vetor(0, 0, 1),
     )
 
-    toro = Toro(centro_y = 0, 
-                centro_z = 0, 
-                R = 0.7, 
-                r = 0.4, 
-                cor = (0.5, 0, 0.5)
-            )
+    toro = Toro(
+        centro_y = 0, 
+        centro_z = 0, 
+        R = 0.5, 
+        r = 0.2, 
+        cor = (0.5, 0, 0.5)
+    )
     
-    malha_toro = toro.triangulate(1.0)
+    malha_toro = toro.triangulate(math.pi/12) # Espaçamento pequeno para mais detalhes (rendereização demorada)
     entidades = [malha_toro]
 
     ray_casting = RayCasting(hres = 500, vres = 500)
