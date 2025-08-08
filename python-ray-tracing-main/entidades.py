@@ -65,7 +65,6 @@ class Esfera: #Representa uma esfera 3D
         t1 = (-b + discriminant**0.5) / (2 * a)
         t2 = (-b - discriminant**0.5) / (2 * a)
 
-        # <<< MUDANÇA AQUI >>>
         # Lógica mais robusta para encontrar a interseção correta e na frente da câmera.
         epsilon = 0.0001
         
@@ -124,7 +123,6 @@ class Plane: #representa um plano 3D
             
             t = sum(n * dp for n, dp in zip(self.normal, d)) / denominator #calcula o "quanto andar" (parâmetro t) para alcançar o plano ao longo do vetor da linha
 
-            # <<< MUDANÇA AQUI >>>
             # Verifica se a interseção ocorre NA FRENTE do raio. Se t for negativo, a interseção está atrás.
             if t > 0.0001:
                 return tuple(lp + t * lv for lp, lv in zip(line_point, line_vector)) #achar as coordenadas exatas do ponto de interseção
