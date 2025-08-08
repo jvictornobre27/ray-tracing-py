@@ -31,7 +31,7 @@ class Camera:
                     smallest_distance = distance
                     color = phong(
                         target,
-                        [Luz(0, 30, 0, [255, 255, 255])],
+                        [Luz(0, 5, 5, [255, 255, 255])],
                         Ponto(intersection[0], intersection[1], intersection[2]),
                         self.position,
                         targets,
